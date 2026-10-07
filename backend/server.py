@@ -24,6 +24,10 @@ def handler_for(database: Path):
             self.wfile.write(data)
 
         def do_GET(self):
+            expected_port = self.server.server_port
+            allowed_hosts = {f"127.0.0.1:{expected_port}", f"localhost:{expected_port}"}
+            if self.headers.get("Host") not in allowed_hosts:
+                return self.send_json(403, {"error": "Invalid Host header"})
             parsed = urlsplit(self.path)
             try:
                 raw_filters = parse_qs(parsed.query, keep_blank_values=True)

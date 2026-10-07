@@ -32,6 +32,8 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Test local payroll service
+        run: python3 -m unittest discover -s backend -p 'test_*.py'
       - name: Install browser
         run: npx playwright install --with-deps chromium
       - name: Run browser journeys
