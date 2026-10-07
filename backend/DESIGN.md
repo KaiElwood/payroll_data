@@ -50,8 +50,8 @@ calculating totals. Add paging before importing materially larger files.
 | `GET /api/v1/comparisons/weekly` | Chronological series of overtime share and apprentice/journeyworker hours with explicit numerator and denominator. |
 | `GET /api/v1/employees/{employeeId}/comparison` | Chronological same occupation/level peers and hours/overtime/wage differences between the latest two *reported* weeks. Points include `employeeHours`, `peerTotalHours`, `peerCount`, and nullable `peerAverage`; the denominator counts distinct peer employee-weeks and excludes the selected employee. |
 
-No endpoint makes a compliance finding. Empty filters return zero totals and empty
-series. Missing employee IDs return 404. A week with no peer rows returns a `null`
+No endpoint makes a compliance finding. Filters matching no pay lines return zero totals
+and empty series. Missing employee IDs return 404. A week with no peer rows returns a `null`
 peer mean and zero peer count. `GET /api/v1/health` reports database readiness.
 
 ## React integration and deployment

@@ -39,7 +39,7 @@ For browser tests, install Chromium once with `npx playwright install chromium`,
 - Cash wages = standard hours × standard rate + overtime hours × overtime rate, summed across rows.
 - Estimated benefits value = total reported hours × listed benefits rate. It is shown separately because the file does not say whether this rate means paid benefits, a required fringe, or another amount.
 - Apprentice share = hours on apprentice rows ÷ all reported hours.
-- Employee average rate is the mean of weekly row rates. Daily minimum and average use worked days; maximum includes all recorded days.
+- Employee average rate is the mean of source-row rates. Daily minimum and average use worked days; maximum includes all recorded days.
 - Statistical flags compare a record with **other weeks for the same employee**. They require five distinct comparison weeks, 2.5 population standard deviations, and a material difference: 10 weekly hours, $2/hour in wage rates, or $1/hour in benefits. Rate changes must also reach 10%. A material change can still be flagged when all comparison weeks match.
 - Guardrails flag over 60 hours per week or 16 per day. Split records are combined for these checks and all contributing rows are linked. Statistical flags for split weeks are suppressed pending clarification.
 
