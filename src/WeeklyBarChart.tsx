@@ -4,7 +4,6 @@ import { scaleBand, scaleLinear } from 'd3-scale'
 export interface ChartWeek {
   key: string
   label: string
-  detailLabel?: string
   primary: number
   secondary?: number
 }
@@ -36,7 +35,7 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
   const ticks = y.ticks(4)
   const labelStep = Math.max(1, Math.ceil(points.length / 6))
   const barWidth = Math.min(42, x.bandwidth())
-  const activePoint = points.find((point) => point.key === (focusedWeek ?? hoveredWeek))
+  const activePoint = points.find((point) => point.key === (hoveredWeek ?? focusedWeek))
   const tooltipWidth = 190
   const tooltipHeight = activePoint?.secondary === undefined ? 58 : 76
   const activeX = activePoint ? (x(activePoint.key) ?? 0) + x.bandwidth() / 2 : 0
@@ -56,7 +55,7 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
         const bottom = y(0)
         const primaryTop = y(point.primary)
         const secondaryTop = y(point.primary + (point.secondary ?? 0))
-        const detail = point.detailLabel ?? point.label
+        const detail = `Week ending ${point.key}`
         const values = `${primaryLabel} ${formatValue(point.primary)}${point.secondary === undefined ? '' : `, ${secondaryLabel} ${formatValue(point.secondary)}`}`
         return <g key={point.key} className="chart-week" tabIndex={0} role="group" aria-label={`${detail}: ${values}`}
           onMouseEnter={() => setHoveredWeek(point.key)} onMouseLeave={() => setHoveredWeek(null)}
@@ -70,7 +69,7 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
       })}
       {activePoint && <g className="chart-tooltip" aria-hidden="true" pointerEvents="none">
         <rect x={tooltipX} y={tooltipY} width={tooltipWidth} height={tooltipHeight} rx={8} />
-        <text className="chart-tooltip-week" x={tooltipX + 12} y={tooltipY + 19}>{activePoint.detailLabel ?? activePoint.label}</text>
+        <text className="chart-tooltip-week" x={tooltipX + 12} y={tooltipY + 19}>Week ending {activePoint.key}</text>
         <text x={tooltipX + 12} y={tooltipY + 39}>{primaryLabel}: {formatValue(activePoint.primary)}</text>
         {activePoint.secondary !== undefined && <text x={tooltipX + 12} y={tooltipY + 58}>{secondaryLabel}: {formatValue(activePoint.secondary)}</text>}
       </g>}

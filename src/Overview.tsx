@@ -8,7 +8,7 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
 
 function WageTrend({ rows }: { rows: PayrollRow[] }) {
   const weeks = getWeeklySummaries(rows)
-  const points = weeks.map((week) => ({ key: week.weekEnding, label: weekLabel(week.weekDate), detailLabel: `Week ending ${week.weekEnding}`, primary: week.cashWages }))
+  const points = weeks.map((week) => ({ key: week.weekEnding, label: weekLabel(week.weekDate), primary: week.cashWages }))
   return <section className="panel trend">
     <div className="section-heading"><div><span className="eyebrow">Trend</span><h2>Weekly wage spend</h2></div><span className="pill">Cash wages</span></div>
     {weeks.length ? <>
