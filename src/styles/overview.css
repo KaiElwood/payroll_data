@@ -11,7 +11,13 @@
 .chart-axis-label { fill: var(--muted); font: 11px Inter, ui-sans-serif, system-ui, sans-serif; }
 .chart-bar-primary { fill: #55d9b6; }
 .chart-bar-secondary { fill: #a8bcb1; }
-.chart-bar-primary:hover, .chart-bar-secondary:hover { opacity: .8; }
+.chart-hit-area { fill: transparent; }
+.chart-week:hover .chart-bar-primary, .chart-week:hover .chart-bar-secondary,
+.chart-week:focus-visible .chart-bar-primary, .chart-week:focus-visible .chart-bar-secondary { stroke: #267e67; stroke-width: 2; }
+.chart-week:focus { outline: none; }
+.chart-tooltip rect { fill: #fffdf6; stroke: #cbdccf; stroke-width: 1; filter: drop-shadow(0 3px 6px #273e3026); }
+.chart-tooltip text { fill: #35463d; font: 12px Inter, ui-sans-serif, system-ui, sans-serif; }
+.chart-tooltip .chart-tooltip-week { fill: #23735e; font-weight: 700; }
 .mix-key { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
 .chart-data { margin-top: 22px; color: var(--muted); font-size: 12px; }
 .chart-data summary { cursor: pointer; }
