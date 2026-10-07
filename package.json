@@ -10,11 +10,13 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "d3-scale": "^4.0.2",
     "papaparse": "^5.5.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@types/d3-scale": "^4.0.9",
     "@types/papaparse": "^5.3.16",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",

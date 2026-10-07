@@ -1,5 +1,6 @@
 import { getOverview, getWeeklySummaries, type PayrollRow } from './data'
 import { money, number, percent, weekLabel } from './format'
+import WeeklyBarChart from './WeeklyBarChart'
 
 function Stat({ label, value, note }: { label: string; value: string; note: string }) {
   return <div className="stat"><span className="caption">{label}</span><strong>{value}</strong><small>{note}</small></div>
@@ -7,16 +8,11 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
 
 function WageTrend({ rows }: { rows: PayrollRow[] }) {
   const weeks = getWeeklySummaries(rows)
-  const max = Math.max(1, ...weeks.map((week) => week.cashWages))
+  const points = weeks.map((week) => ({ key: week.weekEnding, label: weekLabel(week.weekDate), primary: week.cashWages }))
   return <section className="panel trend">
     <div className="section-heading"><div><span className="eyebrow">Trend</span><h2>Weekly wage spend</h2></div><span className="pill">Cash wages</span></div>
     {weeks.length ? <>
-      <div className="bars" role="img" aria-label="Cash wages by reporting week">
-        {weeks.map((week) => <div className="bar-slot" key={week.weekEnding} title={`${weekLabel(week.weekDate)}: ${money(week.cashWages)}`}>
-          <div className="bar" style={{ height: `${Math.max(4, week.cashWages / max * 100)}%` }} />
-        </div>)}
-      </div>
-      <div className="chart-labels"><span>{weekLabel(weeks[0].weekDate)}</span><span>{weekLabel(weeks.at(-1)!.weekDate)}</span></div>
+      <WeeklyBarChart points={points} title="Weekly cash wage spend" description="Cash wages by reporting week. Values are also available in the table below." formatTick={(value) => `$${number(value / 1000)}k`} formatValue={(value) => money(value)} primaryLabel="cash wages" />
       <details className="chart-data"><summary>View weekly wage values</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Cash wages</th></tr></thead><tbody>{weeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{money(week.cashWages)}</td></tr>)}</tbody></table></div></details>
     </> : <p className="muted">No weeks match the filters.</p>}
   </section>
