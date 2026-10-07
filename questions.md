@@ -30,3 +30,12 @@
 - Is a 2.5-standard-deviation cue with five comparison weeks a useful review workload, or should thresholds vary by trade, season, or payroll policy?
 - When an employee's other weeks all have the same rate, should a material change be flagged automatically or held until an approved rate schedule is checked?
 - Should reviewers be able to mark a flag as expected, corrected, or unresolved? Where would those decisions be recorded in a production version?
+
+## Database and service handoff
+
+- Should a corrected CSV replace the entire imported dataset, or should imports be retained as separate reporting snapshots? Who decides which snapshot is current?
+- Can one employee/week contain several occupation, level, or rate lines, and can the same day have hours on more than one line? What identifies a true duplicate source line?
+- Which spelling should be shown for IDs 1015, 1017, and 1021, whose names vary in the source? Is an employee ID stable across contractors and projects?
+- Should payroll amounts round per source line, per employee/week, or only at the final displayed total? The local service computes from decimal hours and rates and rounds only for display.
+- What import audit information and retention period are required? Should a failed import be visible to reviewers?
+- Which users may view employee names, rates, and wages? Where should the server run, and what authentication, backups, and audit logs are required before deployment?
