@@ -12,7 +12,7 @@ function WageTrend({ rows }: { rows: PayrollRow[] }) {
   return <section className="panel trend">
     <div className="section-heading"><div><span className="eyebrow">Trend</span><h2>Weekly wage spend</h2></div><span className="pill">Cash wages</span></div>
     {weeks.length ? <>
-      <WeeklyBarChart points={points} title="Weekly cash wage spend" description="Cash wages by reporting week. Values are also available in the table below." formatTick={(value) => `$${number(value / 1000)}k`} formatValue={(value) => money(value)} primaryLabel="cash wages" />
+      <WeeklyBarChart points={points} title="Weekly cash wage spend" description="Cash wages by reporting week. Values are also available in the table below." formatTick={(value) => value >= 10_000 ? `$${number(value / 1000)}k` : money(value)} formatValue={(value) => money(value)} primaryLabel="cash wages" />
       <details className="chart-data"><summary>View weekly wage values</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Cash wages</th></tr></thead><tbody>{weeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{money(week.cashWages)}</td></tr>)}</tbody></table></div></details>
     </> : <p className="muted">No weeks match the filters.</p>}
   </section>
