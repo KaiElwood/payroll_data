@@ -13,6 +13,7 @@
 - Are name changes for one employee ID expected (for example, preferred names or data-entry corrections)? Which field is the authoritative identity?
 - Are rate changes during the period expected? Are there effective dates or negotiated schedules we should use when judging them?
 - Does overtime follow any project-specific rule, or should we only report the hours and rates provided in the file?
+- For employee daily-hour summaries, should the minimum and average include zero-hour days, or only days worked? The prototype uses active days for those two measures.
 
 ## Review rules
 
