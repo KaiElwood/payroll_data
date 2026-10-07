@@ -6,6 +6,18 @@ from collections import defaultdict
 from backend.queries import rows, summarize, weekly
 
 
+def _employee_week(week: str, lines: list[dict]) -> dict:
+    summary = summarize(lines)
+    return {
+        "weekEnding": week,
+        "standardHours": round(summary["totalHours"] - summary["overtimeHours"], 2),
+        "overtimeHours": summary["overtimeHours"],
+        "totalHours": summary["totalHours"],
+        "cashWages": summary["cashWages"],
+        "records": len(lines), "lines": lines,
+    }
+
+
 def meta(db: sqlite3.Connection) -> dict:
     from backend.queries import options
 
@@ -55,14 +67,7 @@ def employee_detail(db: sqlite3.Connection, employee_id: str, filters: dict | No
         "level": latest["level"] if latest else None,
         "occupation": latest["occupation"] if latest else None,
         "summary": summarize(selected),
-        "weeks": [{
-            "weekEnding": week,
-            "standardHours": sum(row["totalStandardHours"] for row in groups[week]),
-            "overtimeHours": sum(row["totalOvertimeHours"] for row in groups[week]),
-            "totalHours": sum(row["totalHours"] for row in groups[week]),
-            "cashWages": sum(round(row["cashWages"] * 10000) for row in groups[week]) / 10000,
-            "records": len(groups[week]), "lines": groups[week],
-        } for week in sorted(groups)],
+        "weeks": [_employee_week(week, groups[week]) for week in sorted(groups)],
     }
 
 
@@ -108,7 +113,7 @@ def employee_comparison(db: sqlite3.Connection, employee_id: str,
             "peerCount": count,
             "peerAverage": peer_total / count if count else None,
         })
-    weeks = weekly([row for rows_in_week in own_weeks.values() for row in rows_in_week])
+    weeks = weekly(own)
     latest_two = None
     if len(weeks) >= 2:
         previous, current = weeks[-2:]

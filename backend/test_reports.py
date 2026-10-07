@@ -1,3 +1,4 @@
+import csv
 import tempfile
 import unittest
 from pathlib import Path
@@ -40,6 +41,30 @@ class ReportTests(unittest.TestCase):
         self.assertTrue(any(point["peerCount"] == 4 for point in peers))
         self.assertTrue(all(point["peerAverage"] == point["peerTotalHours"] / point["peerCount"]
                             for point in peers if point["peerCount"]))
+
+    def test_split_classification_keeps_all_lines_in_latest_comparison(self):
+        with SOURCE.open(newline="") as handle:
+            reader = csv.DictReader(handle)
+            source_rows = list(reader)
+            fields = reader.fieldnames
+        extra = next(row.copy() for row in source_rows
+                     if row["employee_id"] == "1000" and row["week_ending"] == "06/07/2025")
+        extra["occupation"] = "Painter"
+        extra.update({f"{day}_{kind}_hours": "0" for day in
+                      ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+                      for kind in ("st", "ot")})
+        extra["mon_st_hours"] = "0.3"
+        source_rows.append(extra)
+        changed = Path(self.folder.name) / "split.csv"
+        with changed.open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fields)
+            writer.writeheader()
+            writer.writerows(source_rows)
+        import_csv(self.db, changed)
+        history = employee_detail(self.db, "1000")["weeks"]
+        comparison = employee_comparison(self.db, "1000")
+        self.assertEqual(comparison["latestTwo"]["current"]["totalHours"], history[-1]["totalHours"])
+        self.assertEqual(history[-1]["records"], 2)
 
 
 if __name__ == "__main__":
