@@ -4,6 +4,9 @@
 
 - Who is the primary reviewer: project manager, payroll specialist, or compliance lead? Which decisions should the first screen help them make?
 - Does “PWA” mean prevailing wage and apprenticeship reporting here, and which jurisdiction and program apply?
+- What is the precise project location (state, county, and worksite) and which wage determination or New York schedule applies? What are its effective dates?
+- Who approves the mapping from CSV occupations and levels to wage-table classifications? Are apprentice rates conditional on registration or program details not present here?
+- If we add a selectable wage table, should it be a scenario comparison or a formal compliance review, and who supplies the authoritative table version?
 - Should totals represent cash wages only, or cash wages plus the hourly benefits rate? Does `benefits_rate` mean paid benefits, a required fringe amount, or something else?
 - Is this one project and one contractor? The CSV has no project, contractor, location, or work classification code beyond occupation and level.
 

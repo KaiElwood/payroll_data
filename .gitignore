@@ -1,4 +1,5 @@
 candidate-email (1).pdf
 node_modules/
 dist/
+*.tsbuildinfo
 .DS_Store
