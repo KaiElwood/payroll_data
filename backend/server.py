@@ -75,5 +75,7 @@ def serve(database: Path, port: int = 8765):
     print(f"Payroll API listening at http://127.0.0.1:{server.server_port}", flush=True)
     try:
         server.serve_forever()
+    except KeyboardInterrupt:
+        pass
     finally:
         server.server_close()

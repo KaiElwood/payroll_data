@@ -2,40 +2,37 @@
 
 ## Reporting scope
 
-- Who is the primary reviewer: project manager, payroll specialist, or compliance lead? Which decisions should the first screen help them make?
-- What is the precise project location (state, county, and worksite) and which wage determination or New York schedule applies? What are its effective dates? (PWA-specific)
-- Who approves the mapping from CSV occupations and levels to wage-table classifications? Are apprentice rates conditional on registration or program details not present here?
-- If we add a selectable wage table, should it be a scenario comparison or a formal compliance review, and who supplies the authoritative table version?
-- Should totals represent cash wages only, or cash wages plus the hourly benefits rate? Does `benefits_rate` mean paid benefits, a required fringe amount, or something else?
-- Is this one project and one contractor? The CSV has no project, contractor, location, or work classification code beyond occupation and level.
-    - Assuming one project and one contractor
+- Who reviews the dashboard, and which decisions should the first screen support?
+- What are the state, county, worksite, applicable wage determination or New York schedule, and effective dates? (PWA-specific)
+- Who approves occupation/level mappings? Do apprentice rates depend on registration or program details?
+- Is a selectable wage table for scenario comparison or formal review? Who supplies its authoritative version?
+- Should totals include cash wages only or the listed benefits rate? What does `benefits_rate` represent?
+- Is this one project and contractor? The CSV lacks both identifiers; the prototype assumes one of each.
 
 ## Data interpretation
 
-- Is each employee expected to have exactly one record per week? Can an employee work multiple occupations or levels within a week?
-- If an employee has multiple records in one week, should their hours be combined for statistical review, and how should different rates in that same week be interpreted? The prototype suppresses statistical flags for a split candidate week.
-- If combined employee-week hours cross a review threshold, should the flag remain visible when filtering to any contributing occupation or level? The prototype currently does this.
-- Are name changes for one employee ID expected (for example, preferred names or data-entry corrections)? Which field is the authoritative identity?
-- Are rate changes during the period expected? Are there effective dates or negotiated schedules we should use when judging them?
-- Does overtime follow any project-specific rule, or should we only report the hours and rates provided in the file?
-- For employee daily-hour summaries, should the minimum and average include zero-hour days, or only days worked? The prototype uses active days for those two measures.
-- Should week-over-week comparisons use the two latest reported weeks when an intervening calendar week is missing, or show a gap instead? Should missing weeks be treated as no work or missing data?
-- For peer-hour comparisons, should the cohort use the same occupation and level in the same week, or a wider group? Should a zero-hour report count as a reported employee-week in the peer mean? The prototype uses the same occupation and level and includes zero-hour reports.
+- Can an employee have multiple occupation, level, or rate lines in one week? How should split hours and rates enter statistical review? The prototype suppresses split-week statistical flags.
+- Should a combined-hours flag appear under every contributing occupation/level filter? It currently does.
+- Are name changes for one ID expected, and which identity field is authoritative?
+- Are rate changes expected, and which effective dates or negotiated schedules govern them?
+- Should overtime follow project rules or only the reported hours and rates?
+- Should daily minimum and average include zero-hour days? The prototype uses worked days.
+- Do missing calendar weeks mean no work or missing data? Should comparisons use the latest two reported weeks or show a gap?
+- Should peer hours use the same occupation/level and include zero-hour reports? The prototype does both.
 
 ## Review rules
 
-- What weekly and daily hour thresholds should prompt review? Are long shifts expected on this project?
-- Should unusual pay rates be compared with an employee's own history, peers in the same occupation and level, or an approved wage schedule?
-- How many observations are enough before a standard-deviation score is useful, and should we still show absolute guardrails for small samples?
-- Is a 2.5-standard-deviation cue with five comparison weeks a useful review workload, or should thresholds vary by trade, season, or payroll policy?
-- When an employee's other weeks all have the same rate, should a material change be flagged automatically or held until an approved rate schedule is checked?
-- Should reviewers be able to mark a flag as expected, corrected, or unresolved? Where would those decisions be recorded in a production version?
+- Which daily and weekly hour thresholds fit this project? Are long shifts expected?
+- Should unusual rates be compared with employee history, same occupation/level peers, or an approved schedule?
+- Are five comparison weeks and 2.5 standard deviations useful? Should thresholds vary by trade, season, or policy? Should absolute guardrails cover small samples?
+- If all other weeks have the same rate, should a material change be flagged or await an approved schedule?
+- Should reviewers mark flags expected, corrected, or unresolved? Where should decisions be recorded?
 
 ## Database and service handoff
 
-- Should a corrected CSV replace the entire imported dataset, or should imports be retained as separate reporting snapshots? Who decides which snapshot is current?
-- Can one employee/week contain several occupation, level, or rate lines, and can the same day have hours on more than one line? What identifies a true duplicate source line?
-- Which spelling should be shown for IDs 1015, 1017, and 1021, whose names vary in the source? Is an employee ID stable across contractors and projects?
-- Should payroll amounts round per source line, per employee/week, or only at the final displayed total? The local service computes from decimal hours and rates and rounds only for display.
-- What import audit information and retention period are required? Should a failed import be visible to reviewers?
-- Which users may view employee names, rates, and wages? Where should the server run, and what authentication, backups, and audit logs are required before deployment?
+- Should corrected imports replace the dataset or remain as snapshots? Who chooses the current one?
+- Can multiple lines share an employee, week, and day? What makes a true duplicate?
+- Which spelling should display for IDs 1015, 1017, and 1021? Are IDs stable across contractors and projects?
+- Where should payroll amounts round: source line, employee/week, or display total? The service rounds only for display.
+- What import audit data and retention are required? Should reviewers see failed imports?
+- Who can view names and wages? Where will the server run, and what authentication, backups, and audit logs are required?
