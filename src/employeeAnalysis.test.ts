@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, type EmployeeWeek } from './employeeAnalysis'
+import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, getStandardRateHistory, type EmployeeWeek } from './employeeAnalysis'
 import { payrollRows } from './data'
 
 describe('employee weekly analysis', () => {
@@ -29,5 +29,16 @@ describe('employee weekly analysis', () => {
     const [week] = comparePeerWeeks([target, peer, splitPeer, otherLevel, otherOccupation], target.employeeId, target.occupation, target.level)
     expect(week).toMatchObject({ employeeHours: 40, peerTotalHours: 40, peerCount: 1, peerAverage: 40 })
     expect(comparePeerWeeks([target], target.employeeId, target.occupation, target.level)[0].peerAverage).toBeNull()
+  })
+
+  it('withholds a single rate change when a reported week has two rates', () => {
+    const first = { ...payrollRows[0], standardRate: 20 }
+    const split = { ...first, standardRate: 25 }
+    const later = { ...first, weekEnding: '03/08/2025', weekDate: new Date('2025-03-08'), standardRate: 30 }
+    expect(getStandardRateHistory([first, split, later])).toMatchObject([
+      { minRate: 20, maxRate: 25, change: null },
+      { minRate: 30, maxRate: 30, change: null },
+    ])
+    expect(getStandardRateHistory([first, later])[1].change).toBe(10)
   })
 })

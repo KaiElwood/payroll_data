@@ -33,7 +33,7 @@ export default function PeerHoursChart({ weeks }: { weeks: PeerWeek[] }) {
       const peerX = midpoint + 2
       const employeeTop = y(week.employeeHours)
       const peerTop = y(week.peerAverage ?? 0)
-      return <g key={week.weekEnding} className="chart-week" tabIndex={0} role="group" aria-label={`Week ending ${week.weekEnding}: employee ${number(week.employeeHours, 1)} hours; ${week.peerCount ? `average of ${week.peerCount} peers ${number(week.peerAverage!, 1)} hours` : 'no peers reported'}`}
+      return <g key={week.weekEnding} className="chart-week" tabIndex={0} role="group" aria-label={`Week ending ${week.weekEnding}: employee ${number(week.employeeHours, 1)} hours; ${week.peerCount ? `average of ${week.peerCount} ${week.peerCount === 1 ? 'peer' : 'peers'} ${number(week.peerAverage!, 1)} hours` : 'no peers reported'}`}
         onMouseEnter={() => { setHovered(week.weekEnding); setSource('hover') }} onMouseLeave={() => setHovered(null)}
         onFocus={() => { setFocused(week.weekEnding); setSource('focus') }} onBlur={() => setFocused(null)}>
         <rect className="chart-hit-area" x={start} y={margin.top} width={x.bandwidth()} height={y(0) - margin.top} />

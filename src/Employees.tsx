@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getEmployeeSummaries, type EmployeeSummary, type PayrollRow } from './data'
-import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, type WeekComparison } from './employeeAnalysis'
+import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, getStandardRateHistory, type WeekComparison } from './employeeAnalysis'
 import { money, number, weekLabel } from './format'
 import WeeklyBarChart from './WeeklyBarChart'
 import PeerHoursChart from './PeerHoursChart'
@@ -29,6 +29,7 @@ function LatestComparison({ comparison }: { comparison: WeekComparison | null })
 function EmployeeDetail({ employee, rows }: { employee: EmployeeSummary; rows: PayrollRow[] }) {
   const weeks = getEmployeeWeeks(employee.rows)
   const peerWeeks = comparePeerWeeks(rows, employee.employeeId, employee.occupation, employee.level)
+  const rateHistory = getStandardRateHistory(employee.rows)
   const points = weeks.map((week) => ({ key: week.weekEnding, label: weekLabel(week.weekDate), primary: week.standardHours, secondary: week.overtimeHours }))
   return <div className="employee-detail">
     <div className="section-heading"><div><span className="eyebrow">Employee detail</span><h2>{employee.name}</h2><p className="muted">ID {employee.employeeId} · {employee.occupation} · {employee.level.toLowerCase()}</p></div><span className="pill">{employee.weeks} weeks</span></div>
@@ -38,10 +39,10 @@ function EmployeeDetail({ employee, rows }: { employee: EmployeeSummary; rows: P
     <WeeklyBarChart points={points} title={`${employee.name} weekly hours`} description="Standard and overtime hours by reporting week. Exact weekly totals are in the table below." formatTick={(value) => `${number(value, value < 10 ? 1 : 0)} h`} formatValue={(value) => `${number(value, 1)} hours`} primaryLabel="standard" secondaryLabel="overtime" />
     <details className="chart-data"><summary>View weekly hour totals</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Standard</th><th scope="col">Overtime</th><th scope="col">Total</th></tr></thead><tbody>{weeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{number(week.standardHours, 1)} h</td><td>{number(week.overtimeHours, 1)} h</td><td>{number(week.totalHours, 1)} h</td></tr>)}</tbody></table></div></details>
     <h3>Change from previous reported week</h3><LatestComparison comparison={compareLatestWeeks(weeks)} />
-    <h3>Hours beside peers</h3><p className="hint">Same occupation and level, in weeks this employee reported work. Peer mean = other workers’ total hours ÷ their reported employee-weeks for that week. Records in other roles are excluded.</p>
+    <h3>Hours beside peers</h3><p className="hint">Same occupation and level, in weeks this employee reported in that role. Peer mean = other workers’ total hours ÷ their reported employee-weeks for that week. Records in other roles are excluded.</p>
     <div className="chart-legend"><span><i className="legend-standard" />Employee</span><span><i className="legend-overtime" />Peer mean</span></div>
     <PeerHoursChart weeks={peerWeeks} />
-    <details className="chart-data"><summary>View employee and peer hours</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Employee hours</th><th scope="col">Peers</th><th scope="col">Peer total hours</th><th scope="col">Peer mean hours</th></tr></thead><tbody>{peerWeeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{number(week.employeeHours, 1)} h</td><td>{week.peerCount}</td><td>{number(week.peerTotalHours, 1)} h</td><td>{week.peerAverage === null ? '—' : `${number(week.peerAverage, 1)} h`}</td></tr>)}</tbody></table></div></details>
+    <details className="chart-data"><summary>View employee and peer hours</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Employee hours</th><th scope="col">Peers</th><th scope="col">Peer total hours</th><th scope="col">Peer mean (rounded)</th></tr></thead><tbody>{peerWeeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{number(week.employeeHours, 1)} h</td><td>{week.peerCount}</td><td>{number(week.peerTotalHours, 1)} h</td><td>{week.peerAverage === null ? '—' : `${number(week.peerAverage, 1)} h`}</td></tr>)}</tbody></table></div></details>
     <h3>Daily hours</h3><p className="hint">Minimum and average use days with reported work; maximum includes all days.</p>
     <div className="detail-metrics"><div><span>Minimum active day</span><strong>{number(employee.minActiveDayHours, 1)} h</strong></div><div><span>Average active day</span><strong>{number(employee.averageActiveDayHours, 1)} h</strong></div><div><span>Maximum day</span><strong>{number(employee.maxDayHours, 1)} h</strong></div></div>
     <h3>Hourly rates</h3><div className="table-scroll"><table><thead><tr><th scope="col">Rate</th><th scope="col">Minimum</th><th scope="col">Average</th><th scope="col">Maximum</th></tr></thead><tbody>
@@ -49,6 +50,8 @@ function EmployeeDetail({ employee, rows }: { employee: EmployeeSummary; rows: P
       <RateRow label="Overtime" min={employee.minOvertimeRate} average={employee.averageOvertimeRate} max={employee.maxOvertimeRate} />
       <RateRow label="Benefits" min={employee.minBenefitsRate} average={employee.averageBenefitsRate} max={employee.maxBenefitsRate} />
     </tbody></table></div>
+    <h3>Reported standard rate by week</h3><p className="hint">Cash hourly rate in the CSV, compared with the prior reported week. A range means multiple rates appeared that week; no change is calculated across a range. This is not a comparison with an approved wage schedule.</p>
+    <div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Reported rate</th><th scope="col">Change from prior report</th></tr></thead><tbody>{rateHistory.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{week.minRate === week.maxRate ? money(week.minRate, 2) : `${money(week.minRate, 2)}–${money(week.maxRate, 2)}`}</td><td>{week.change === null ? '—' : `${week.change > 0 ? '+' : week.change < 0 ? '−' : ''}${money(Math.abs(week.change), 2)}`}</td></tr>)}</tbody></table></div>
     <h3>Weekly records</h3><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Standard</th><th scope="col">Overtime</th><th scope="col">Cash wages</th></tr></thead><tbody>{employee.rows.map((row) => <tr key={row.rowNumber}><td>{weekLabel(row.weekDate)}</td><td>{number(row.totalStandardHours, 1)} h</td><td>{number(row.totalOvertimeHours, 1)} h</td><td>{money(row.cashWages)}</td></tr>)}</tbody></table></div>
   </div>
 }

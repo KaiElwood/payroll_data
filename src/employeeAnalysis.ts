@@ -68,3 +68,25 @@ export function comparePeerWeeks(rows: PayrollRow[], employeeId: string, occupat
     }
   })
 }
+
+export interface StandardRateWeek {
+  weekEnding: string
+  weekDate: Date
+  minRate: number
+  maxRate: number
+  change: number | null
+}
+
+export function getStandardRateHistory(rows: PayrollRow[]): StandardRateWeek[] {
+  let previous: StandardRateWeek | null = null
+  return getWeeklySummaries(rows).map((week) => {
+    const rates = rows.filter((row) => row.weekEnding === week.weekEnding).map((row) => row.standardRate)
+    const minRate = Math.min(...rates)
+    const maxRate = Math.max(...rates)
+    const change: number | null = previous && previous.minRate === previous.maxRate && minRate === maxRate
+      ? Math.round(maxRate * 100 - previous.maxRate * 100) / 100 : null
+    const current = { weekEnding: week.weekEnding, weekDate: week.weekDate, minRate, maxRate, change }
+    previous = current
+    return current
+  })
+}
