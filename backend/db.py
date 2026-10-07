@@ -62,6 +62,7 @@ def parse_csv(contents: bytes) -> list[dict]:
         if missing:
             raise ValueError(f"Missing CSV columns: {', '.join(sorted(missing))}")
         parsed = []
+        # Logical record number matches the existing React rowNumber convention.
         for row_number, raw in enumerate(reader, start=2):
             if None in raw:
                 raise ValueError(f"Extra CSV fields on row {row_number}")
