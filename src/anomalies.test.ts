@@ -48,6 +48,17 @@ describe('payroll reporting data', () => {
     const longWeeks = flags.filter((flag) => flag.title === 'Long reported week')
     expect(longWeeks).toHaveLength(1)
     expect(longWeeks[0].observed).toBe('70.0 h')
+    expect(longWeeks[0].sourceRows.map((source) => source.rowNumber)).toEqual([10000, 10001])
+  })
+
+  it('combines split records once for the daily hour guardrail', () => {
+    const first = row(0, 0, 20)
+    const second = row(1, 0, 20)
+    first.standardHours = [10, 10, 0, 0, 0, 0, 0]
+    second.standardHours = [10, 10, 0, 0, 0, 0, 0]
+    const flags = findReviewFlags([first, second])
+    expect(flags.filter((flag) => flag.title === 'Long MON shift')).toHaveLength(1)
+    expect(flags.filter((flag) => flag.title === 'Long TUE shift')).toHaveLength(1)
   })
 
   it('describes tied employee names without inventing a usual name', () => {

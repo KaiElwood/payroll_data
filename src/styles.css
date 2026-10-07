@@ -133,5 +133,5 @@ tbody th { font-weight: 500; text-align: left; }
   .week-stats div { padding: 0; border: 0; }
 }
 @media (max-width: 600px) { .employee-items, .detail-metrics { grid-template-columns: 1fr; } .flag-main { display: block; } .flag-main strong { display: block; margin-top: 12px; } }
-@media (max-width: 450px) { .stats { gap: 10px; } .stat, .panel { padding: 19px; } .stat strong { font-size: 22px; } .filter-count { display: none; } }
+@media (max-width: 450px) { .stats { grid-template-columns: 1fr; gap: 10px; } .stat, .panel { padding: 19px; } .stat strong { font-size: 26px; } .filter-count { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }

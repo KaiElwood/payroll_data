@@ -8,7 +8,7 @@ const allFlags = findReviewFlags(payrollRows)
 export default function Review({ rows }: { rows: PayrollRow[] }) {
   const [category, setCategory] = useState<FlagCategory | 'all'>('all')
   const visibleRows = new Set(rows.map((row) => row.rowNumber))
-  const flags = allFlags.filter((flag) => visibleRows.has(flag.row.rowNumber) && (category === 'all' || flag.category === category))
+  const flags = allFlags.filter((flag) => flag.sourceRows.some((source) => visibleRows.has(source.rowNumber)) && (category === 'all' || flag.category === category))
   return <div className="content"><div className="page-title"><div><span className="eyebrow">Workspace / Review queue</span><h1>Needs review</h1><p className="muted">Statistical and threshold-based cues for a human reviewer. A flag is not a confirmed error or compliance finding.</p></div><span className="source-pill">{flags.length} flags</span></div>
     <section className="panel rule-panel"><div><span className="eyebrow">How flags work</span><h2>Explainable review rules</h2></div><p className="muted">Rates and weekly hours are compared with the same employee’s other weeks. A statistical flag needs at least five comparison weeks and a difference of 2.5 standard deviations, plus a material difference ($2/hour for wages, $1/hour for benefits, or 10 weekly hours). Rate changes also need a 10% difference. Separate guardrails flag days over 16 hours and weeks over 60 hours.</p></section>
     <div className="review-controls" aria-label="Flag categories">{(['all', 'hours', 'rates', 'identity'] as const).map((item) => <button key={item} className={category === item ? 'active' : ''} aria-pressed={category === item} onClick={() => setCategory(item)}>{item === 'all' ? 'All flags' : item}</button>)}</div>

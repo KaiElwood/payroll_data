@@ -10,6 +10,7 @@ export interface ReviewFlag {
   reason: string
   observed: string
   row: PayrollRow
+  sourceRows: PayrollRow[]
 }
 
 const DAY_LIMIT = 16
@@ -45,8 +46,8 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
   const byEmployee = new Map<string, PayrollRow[]>()
   for (const row of rows) byEmployee.set(row.employeeId, [...(byEmployee.get(row.employeeId) ?? []), row])
   const flags: ReviewFlag[] = []
-  const add = (row: PayrollRow, category: FlagCategory, severity: ReviewFlag['severity'], title: string, observed: string, reason: string) => {
-    flags.push({ id: `${row.rowNumber}-${title}`, row, category, severity, title, observed, reason })
+  const add = (row: PayrollRow, category: FlagCategory, severity: ReviewFlag['severity'], title: string, observed: string, reason: string, sourceRows = [row]) => {
+    flags.push({ id: `${row.rowNumber}-${title}`, row, sourceRows, category, severity, title, observed, reason })
   }
 
   for (const row of rows) {
@@ -57,10 +58,10 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
     if (sameWeekRows[0] === row) {
       const source = singleRecordWeek ? 'one record' : `${sameWeekRows.length} records (CSV rows ${sameWeekRows.map((item) => item.rowNumber).join(', ')})`
       const weekHours = sameWeekRows.reduce((total, item) => total + item.totalHours, 0)
-      if (weekHours > WEEK_LIMIT) add(row, 'hours', 'high', 'Long reported week', `${number(weekHours, 1)} h`, `Combined hours from ${source} exceed the ${WEEK_LIMIT}-hour weekly review threshold.`)
+      if (weekHours > WEEK_LIMIT) add(row, 'hours', 'high', 'Long reported week', `${number(weekHours, 1)} h`, `Combined hours from ${source} exceed the ${WEEK_LIMIT}-hour weekly review threshold.`, sameWeekRows)
       days.forEach((day, index) => {
         const hours = sameWeekRows.reduce((total, item) => total + item.standardHours[index] + item.overtimeHours[index], 0)
-        if (hours > DAY_LIMIT) add(row, 'hours', 'high', `Long ${day.toUpperCase()} shift`, `${number(hours, 1)} h`, `Combined hours from ${source} exceed the ${DAY_LIMIT}-hour daily review threshold.`)
+        if (hours > DAY_LIMIT) add(row, 'hours', 'high', `Long ${day.toUpperCase()} shift`, `${number(hours, 1)} h`, `Combined hours from ${source} exceed the ${DAY_LIMIT}-hour daily review threshold.`, sameWeekRows)
       })
     }
     if (singleRecordWeek && row.totalHours <= WEEK_LIMIT) {
