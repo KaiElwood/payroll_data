@@ -30,6 +30,8 @@ def validate_filters(db: sqlite3.Connection, filters: dict) -> None:
     if "weekEnding" in filters:
         value = filters["weekEnding"]
         try:
+            if not isinstance(value, str):
+                raise ValueError
             if date.fromisoformat(value).isoformat() != value:
                 raise ValueError
         except ValueError as error:
