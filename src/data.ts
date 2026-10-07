@@ -180,7 +180,7 @@ export function getEmployeeSummaries(rows: PayrollRow[]): EmployeeSummary[] {
       name: ordered.at(-1)!.employeeName,
       level: ordered.at(-1)!.level,
       occupation: ordered.at(-1)!.occupation,
-      weeks: group.length,
+      weeks: new Set(group.map((row) => row.weekEnding)).size,
       totalHours: sum(group.map((row) => row.totalHours)),
       overtimeHours: sum(group.map((row) => row.totalOvertimeHours)),
       cashWages: sum(group.map((row) => row.cashWages)),

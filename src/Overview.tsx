@@ -17,6 +17,7 @@ function WageTrend({ rows }: { rows: PayrollRow[] }) {
         </div>)}
       </div>
       <div className="chart-labels"><span>{weekLabel(weeks[0].weekDate)}</span><span>{weekLabel(weeks.at(-1)!.weekDate)}</span></div>
+      <details className="chart-data"><summary>View weekly wage values</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Cash wages</th></tr></thead><tbody>{weeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{money(week.cashWages)}</td></tr>)}</tbody></table></div></details>
     </> : <p className="muted">No weeks match the filters.</p>}
   </section>
 }
