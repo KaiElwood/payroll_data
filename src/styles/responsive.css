@@ -1,4 +1,4 @@
-@media (max-width: 1050px) { .stats { grid-template-columns: repeat(2, 1fr); } .two-column, .employee-layout { grid-template-columns: 1fr; } .employee-items { grid-template-columns: repeat(2, 1fr); max-height: 270px; } }
+@media (max-width: 1050px) { .stats { grid-template-columns: repeat(2, 1fr); } .two-column, .comparison-grid, .employee-layout { grid-template-columns: 1fr; } .employee-items { grid-template-columns: repeat(2, 1fr); max-height: 270px; } }
 @media (max-width: 720px) {
   .site-header { flex-wrap: wrap; gap: 10px 20px; padding: 16px 20px; }
   .site-header nav { order: 3; width: 100%; gap: 20px; overflow-x: auto; }

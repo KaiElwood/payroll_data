@@ -1,6 +1,7 @@
 import { getOverview, getWeeklySummaries, type PayrollRow } from './data'
 import { money, number, percent, weekLabel } from './format'
 import WeeklyBarChart from './WeeklyBarChart'
+import OverviewComparisons from './OverviewComparisons'
 
 function Stat({ label, value, note }: { label: string; value: string; note: string }) {
   return <div className="stat"><span className="caption">{label}</span><strong>{value}</strong><small>{note}</small></div>
@@ -33,6 +34,7 @@ export default function Overview({ rows }: { rows: PayrollRow[] }) {
       <WageTrend rows={rows} />
       <section className="panel"><div className="section-heading"><div><span className="eyebrow">Composition</span><h2>Workforce mix</h2></div></div><div className="hero-number">{percent(data.apprenticeShare)}</div><p className="muted">of reported hours are apprentice hours</p><div className="mix-track"><span style={{ width: `${data.apprenticeShare * 100}%` }} /></div><div className="mix-key"><span><i className="key-apprentice" /> Apprentice</span><span><i className="key-journey" /> Journeyworker</span></div><div className="panel-divider" /><div className="summary-line"><span>Estimated benefits value</span><strong>{money(data.estimatedBenefits)}</strong></div><p className="hint">Hours × listed benefits rate, separate from cash wages.</p></section>
     </div>
+    <OverviewComparisons rows={rows} />
     <section className="panel"><div className="section-heading"><div><span className="eyebrow">Recent activity</span><h2>Latest reporting week</h2></div>{latest && <span className="pill">{weekLabel(latest.weekDate)}</span>}</div>{latest ? <div className="week-stats"><div><span>Employees</span><strong>{latest.employees}</strong></div><div><span>Total hours</span><strong>{number(latest.totalHours, 1)}</strong></div><div><span>Cash wages</span><strong>{money(latest.cashWages)}</strong></div><div><span>Apprentice share</span><strong>{percent(latest.apprenticeShare)}</strong></div></div> : <p className="muted">No records match the filters.</p>}</section>
   </div>
 }
