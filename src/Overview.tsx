@@ -19,11 +19,11 @@ function WageTrend({ rows }: { rows: PayrollRow[] }) {
   </section>
 }
 
-export default function Overview({ rows }: { rows: PayrollRow[] }) {
+export default function Overview({ rows, sourceLabel }: { rows: PayrollRow[]; sourceLabel: string }) {
   const data = getOverview(rows)
   const latest = getWeeklySummaries(rows).at(-1)
   return <div className="content">
-    <div className="page-title"><div><span className="eyebrow">Workspace / Overview</span><h1>Payroll at a glance</h1><p className="muted">Workforce hours, wage spend, and reporting patterns from the local CSV.</p></div><span className="source-pill"><i /> Local CSV source</span></div>
+    <div className="page-title"><div><span className="eyebrow">Workspace / Overview</span><h1>Payroll at a glance</h1><p className="muted">Workforce hours, wage spend, and reporting patterns.</p></div><span className="source-pill"><i /> {sourceLabel}</span></div>
     <div className="stats">
       <Stat label="Cash wages" value={money(data.cashWages)} note="Standard + overtime pay" />
       <Stat label="Total hours" value={number(data.totalHours, 1)} note={`${number(data.overtimeHours, 1)} overtime hours`} />

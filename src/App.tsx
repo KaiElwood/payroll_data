@@ -13,6 +13,7 @@ const pages: { key: Page; label: string }[] = [
   { key: 'review', label: 'Review queue' },
 ]
 const useLocalApi = import.meta.env.DEV && import.meta.env.VITE_DATA_SOURCE === 'api'
+const sourceLabel = useLocalApi ? 'Local database' : 'CSV snapshot'
 
 export default function App() {
   const [page, setPage] = useState<Page>('overview')
@@ -53,7 +54,7 @@ export default function App() {
       <nav aria-label="Main navigation">
         {pages.map((item) => <button key={item.key} className={page === item.key ? 'active' : ''} aria-current={page === item.key ? 'page' : undefined} onClick={() => setPage(item.key)}>{item.label}</button>)}
       </nav>
-      <span className="header-note"><i /> {useLocalApi ? 'Local API' : 'Local CSV'}</span>
+      <span className="header-note"><i /> {sourceLabel}</span>
     </header>
     <main className="main">
       <div className="filters" aria-label="Report filters">
@@ -64,7 +65,7 @@ export default function App() {
         <span className="filter-count">{rows.length} records</span>
         {hasFilters && <button className="clear-filters" onClick={clearFilters}>Clear filters</button>}
       </div>
-      {page === 'overview' ? <Overview rows={rows} /> : page === 'employees' ? <Employees rows={rows} /> : <Review rows={rows} allRows={allRows} />}
+      {page === 'overview' ? <Overview rows={rows} sourceLabel={sourceLabel} /> : page === 'employees' ? <Employees rows={rows} /> : <Review rows={rows} allRows={allRows} />}
     </main>
   </div>
 }
