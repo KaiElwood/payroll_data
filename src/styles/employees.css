@@ -13,6 +13,11 @@ input[type="search"] { width: 100%; padding: 10px 12px; border: 1px solid #cbd1c
 .detail-metrics div { display: grid; gap: 7px; padding: 15px; border: 1px solid var(--border); border-radius: 7px; background: #f8f9f3; }
 .detail-metrics span { color: var(--muted); font-size: 11px; }
 .detail-metrics strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+.chart-legend { display: flex; gap: 18px; margin-top: 15px; color: var(--muted); font-size: 11px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i { width: 10px; height: 10px; border-radius: 2px; }
+.legend-standard { background: #55d9b6; }
+.legend-overtime { background: #a8bcb1; }
 .employee-detail .hint { margin: 5px 0 0; }
 .table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }

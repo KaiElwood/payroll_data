@@ -19,6 +19,7 @@
 - Are rate changes during the period expected? Are there effective dates or negotiated schedules we should use when judging them?
 - Does overtime follow any project-specific rule, or should we only report the hours and rates provided in the file?
 - For employee daily-hour summaries, should the minimum and average include zero-hour days, or only days worked? The prototype uses active days for those two measures.
+- Should week-over-week comparisons use the two latest reported weeks when an intervening calendar week is missing, or show a gap instead? Should missing weeks be treated as no work or missing data?
 
 ## Review rules
 
