@@ -38,7 +38,8 @@ function scoreAgainstOtherWeeks(value: number, peers: number[], minDifference: n
   const average = mean(peers)
   if (Math.abs(value - average) < minDifference) return null
   const deviation = standardDeviation(peers)
-  const score = deviation === 0 ? Infinity : Math.abs(value - average) / deviation
+  const effectivelyConstant = deviation <= 1e-9 * Math.max(1, Math.abs(average))
+  const score = effectivelyConstant ? Infinity : Math.abs(value - average) / deviation
   return score >= Z_LIMIT ? { average, score } : null
 }
 

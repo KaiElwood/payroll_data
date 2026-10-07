@@ -66,4 +66,12 @@ describe('payroll reporting data', () => {
     expect(flags.filter((flag) => flag.title === 'Conflicting names for employee ID')).toHaveLength(2)
     expect(flags.every((flag) => !flag.reason.includes('Most records'))).toBe(true)
   })
+
+  it('treats tiny floating-point variation as a constant rate baseline', () => {
+    const records = Array.from({ length: 5 }, (_, index) => ({ ...row(index, index, 40), standardRate: 27.05 }))
+    records.push({ ...row(5, 5, 40), standardRate: 11.36 })
+    const rateFlag = findReviewFlags(records).find((flag) => flag.row.rowNumber === 10005 && flag.title === 'Unusual standard rate')
+    expect(rateFlag?.reason).toContain('constant baseline')
+    expect(rateFlag?.reason).not.toContain('standard deviations')
+  })
 })
