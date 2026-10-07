@@ -19,7 +19,7 @@ npm run build
 ## What the dashboard shows
 
 - **Overview:** Cash wages, reported hours, overtime, unique employees, apprentice hour share, weekly wage spend, estimated benefits value, and the latest week.
-- **Employees:** Searchable employee directory with daily-hour statistics, hourly rate ranges, and weekly records.
+- **Employees:** Searchable employee directory with daily-hour statistics, hourly rate ranges, combined weekly hour trends, a comparison of the latest two reported weeks, and source records.
 - **Review queue:** Long-day and long-week guardrails, unusual employee-specific hours and rates, and employee-ID/name inconsistencies. Shared level, occupation, and week filters apply to all views.
 
 ## Calculation choices
@@ -38,5 +38,7 @@ These thresholds are **review cues**, not proof of an error, underpayment, or le
 The build favors a clear local-data workflow and explainable calculations over a backend, upload flow, or regulatory verdict. The CSV has 263 records for 23 employees across 15 weeks, but no project location, wage determination, approved classification mapping, apprentice registration, or effective-date schedule. Those omissions prevent a meaningful prevailing wage or apprenticeship compliance finding.
 
 The next product step is a **selectable wage-table comparison**. A reviewer could choose an authoritative table, including a New York example, then supply the relevant locality, effective date, and occupation/level mapping. Results should remain provisional until those inputs and the table version are confirmed.
+
+The charts use React-rendered SVG elements and D3 scales for placement. GitHub Pages builds from `main` through `.github/workflows/deploy.yml`; the public site includes the committed payroll CSV in its client-side bundle.
 
 Open product and data questions are tracked in [questions.md](questions.md). The incremental build sequence is in [ROADMAP.md](ROADMAP.md).

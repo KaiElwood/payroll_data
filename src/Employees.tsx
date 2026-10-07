@@ -17,7 +17,7 @@ function LatestComparison({ comparison }: { comparison: WeekComparison | null })
     <div className="table-scroll"><table><thead><tr><th scope="col">Metric</th><th scope="col">Previous</th><th scope="col">Latest</th><th scope="col">Change</th></tr></thead><tbody>
       <tr><th scope="row">Total hours</th><td>{number(previous.totalHours, 1)} h</td><td>{number(current.totalHours, 1)} h</td><td>{signed(hoursChange, `${number(Math.abs(hoursChange), 1)} h`)}</td></tr>
       <tr><th scope="row">Overtime hours</th><td>{number(previous.overtimeHours, 1)} h</td><td>{number(current.overtimeHours, 1)} h</td><td>{signed(overtimeChange, `${number(Math.abs(overtimeChange), 1)} h`)}</td></tr>
-      <tr><th scope="row">Cash wages</th><td>{money(previous.cashWages)}</td><td>{money(current.cashWages)}</td><td>{signed(wagesChange, money(Math.abs(wagesChange)))}</td></tr>
+      <tr><th scope="row">Cash wages</th><td>{money(previous.cashWages, 2)}</td><td>{money(current.cashWages, 2)}</td><td>{signed(wagesChange, money(Math.abs(wagesChange), 2))}</td></tr>
     </tbody></table></div>
   </>
 }
