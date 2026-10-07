@@ -13,6 +13,7 @@
 ## Data interpretation
 
 - Is each employee expected to have exactly one record per week? Can an employee work multiple occupations or levels within a week?
+- If an employee has multiple records in one week, should their hours be combined for statistical review, and how should different rates in that same week be interpreted? The prototype suppresses statistical flags for a split candidate week.
 - Are name changes for one employee ID expected (for example, preferred names or data-entry corrections)? Which field is the authoritative identity?
 - Are rate changes during the period expected? Are there effective dates or negotiated schedules we should use when judging them?
 - Does overtime follow any project-specific rule, or should we only report the hours and rates provided in the file?

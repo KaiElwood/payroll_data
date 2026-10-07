@@ -26,6 +26,12 @@ function standardDeviation(values: number[]) {
   return Math.sqrt(mean(values.map((value) => (value - average) ** 2)))
 }
 
+function valuesFromOtherWeeks(peers: PayrollRow[], field: 'totalHours' | 'standardRate' | 'overtimeRate' | 'benefitsRate') {
+  const weeks = new Map<string, number[]>()
+  for (const peer of peers) weeks.set(peer.weekEnding, [...(weeks.get(peer.weekEnding) ?? []), peer[field]])
+  return [...weeks.values()].map((values) => field === 'totalHours' ? values.reduce((total, value) => total + value, 0) : mean(values))
+}
+
 function scoreAgainstOtherWeeks(value: number, peers: number[], minDifference: number) {
   if (peers.length < MIN_PEER_WEEKS) return null
   const average = mean(peers)
@@ -45,14 +51,15 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
 
   for (const row of rows) {
     const employeeRows = byEmployee.get(row.employeeId)!
-    const peers = employeeRows.filter((other) => other !== row)
+    const peers = employeeRows.filter((other) => other.weekEnding !== row.weekEnding)
+    const singleRecordWeek = employeeRows.filter((other) => other.weekEnding === row.weekEnding).length === 1
     if (row.totalHours > WEEK_LIMIT) add(row, 'hours', 'high', 'Long reported week', `${number(row.totalHours, 1)} h`, `Reported weekly hours exceed the ${WEEK_LIMIT}-hour review threshold.`)
     days.forEach((day, index) => {
       const hours = row.standardHours[index] + row.overtimeHours[index]
       if (hours > DAY_LIMIT) add(row, 'hours', 'high', `Long ${day.toUpperCase()} shift`, `${number(hours, 1)} h`, `Reported daily hours exceed the ${DAY_LIMIT}-hour review threshold.`)
     })
-    if (row.totalHours <= WEEK_LIMIT) {
-      const result = scoreAgainstOtherWeeks(row.totalHours, peers.map((peer) => peer.totalHours), 10)
+    if (singleRecordWeek && row.totalHours <= WEEK_LIMIT) {
+      const result = scoreAgainstOtherWeeks(row.totalHours, valuesFromOtherWeeks(peers, 'totalHours'), 10)
       if (result) add(row, 'hours', 'review', 'Unusual weekly hours', `${number(row.totalHours, 1)} h`, `Other weeks average ${number(result.average, 1)} h. This week differs by ${result.score === Infinity ? 'more than a constant baseline' : `${number(result.score, 1)} standard deviations`}.`)
     }
     for (const [field, label, minimum] of [
@@ -60,7 +67,7 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
       ['overtimeRate', 'Overtime rate', 2],
       ['benefitsRate', 'Benefits rate', 1],
     ] as const) {
-      const result = scoreAgainstOtherWeeks(row[field], peers.map((peer) => peer[field]), minimum)
+      const result = singleRecordWeek ? scoreAgainstOtherWeeks(row[field], valuesFromOtherWeeks(peers, field), minimum) : null
       if (result && Math.abs(row[field] - result.average) >= result.average * 0.1) {
         add(row, 'rates', 'review', `Unusual ${label.toLowerCase()}`, money(row[field], 2), `Other weeks average ${money(result.average, 2)}. Difference is ${result.score === Infinity ? 'outside a constant baseline' : `${number(result.score, 1)} standard deviations`}.`)
       }
@@ -70,9 +77,18 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
   for (const employeeRows of byEmployee.values()) {
     const nameCounts = new Map<string, number>()
     for (const row of employeeRows) nameCounts.set(row.employeeName, (nameCounts.get(row.employeeName) ?? 0) + 1)
-    const usualName = [...nameCounts.entries()].sort((a, b) => b[1] - a[1])[0][0]
-    for (const row of employeeRows) {
-      if (row.employeeName !== usualName) add(row, 'identity', 'review', 'Name differs for employee ID', row.employeeName, `Most records for ID ${row.employeeId} use “${usualName}”. Confirm whether this is an expected name change.`)
+    const [usualName, usualCount] = [...nameCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+    if (usualCount > employeeRows.length / 2) {
+      for (const row of employeeRows) {
+        if (row.employeeName !== usualName) add(row, 'identity', 'review', 'Name differs for employee ID', row.employeeName, `Most records for ID ${row.employeeId} use “${usualName}”. Confirm whether this is an expected name change.`)
+      }
+    } else if (nameCounts.size > 1) {
+      const seen = new Set<string>()
+      for (const row of employeeRows) {
+        if (seen.has(row.employeeName)) continue
+        seen.add(row.employeeName)
+        add(row, 'identity', 'review', 'Conflicting names for employee ID', row.employeeName, `ID ${row.employeeId} has multiple names with no clear majority. Confirm the employee identity.`)
+      }
     }
   }
   return flags.sort((a, b) => (a.severity === b.severity ? b.row.weekDate.getTime() - a.row.weekDate.getTime() : a.severity === 'high' ? -1 : 1))
