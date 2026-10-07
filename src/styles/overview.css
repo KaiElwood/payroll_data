@@ -1,0 +1,31 @@
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 22px; }
+.stat, .panel { min-width: 0; padding: 28px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.stat { display: grid; gap: 9px; }
+.stat .caption { color: var(--muted); }
+.stat strong { font-size: clamp(24px, 2.5vw, 35px); font-weight: 650; letter-spacing: -.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat small, .hint { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.two-column { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 22px; margin-bottom: 22px; }
+.bars { display: flex; align-items: end; gap: 8px; height: 190px; margin-top: 36px; padding: 0 5px; border-bottom: 1px solid var(--border); }
+.bar-slot { display: flex; align-items: end; flex: 1; height: 100%; }
+.bar { width: 100%; border-radius: 4px 4px 0 0; background: #55d9b6; }
+.bar-slot:hover .bar { background: var(--teal-dark); }
+.chart-labels, .mix-key { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
+.chart-labels { margin-top: 10px; }
+.chart-data { margin-top: 22px; color: var(--muted); font-size: 12px; }
+.chart-data summary { cursor: pointer; }
+.chart-data table { margin-top: 12px; }
+.hero-number { margin-top: 25px; color: var(--teal-dark); font-size: 46px; font-weight: 650; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.hero-number + .muted { margin: 0; }
+.mix-track { height: 10px; margin: 23px 0 12px; overflow: hidden; border-radius: 10px; background: #e2e8dd; }
+.mix-track span { display: block; height: 100%; border-radius: 10px; background: var(--teal); }
+.mix-key i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; }
+.key-apprentice { background: var(--teal); }
+.key-journey { background: #bbc5b9; }
+.panel-divider { height: 1px; margin: 26px 0 18px; background: var(--border); }
+.summary-line { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 12px; }
+.summary-line strong { color: #242724; font-size: 14px; font-variant-numeric: tabular-nums; }
+.week-stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 26px; }
+.week-stats div { display: grid; gap: 8px; padding: 0 22px; border-left: 1px solid var(--border); }
+.week-stats div:first-child { padding-left: 0; border: 0; }
+.week-stats span { color: var(--muted); font-size: 11px; }
+.week-stats strong { font-size: 20px; font-variant-numeric: tabular-nums; }

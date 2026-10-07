@@ -1,0 +1,17 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #242724;
+  background: #f8f7f0;
+  font-synthesis: none;
+  --page: #f8f7f0;
+  --surface: #fffdf8;
+  --border: #dddcd1;
+  --muted: #626a64;
+  --teal: #20c9a1;
+  --teal-dark: #087c68;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, select, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--teal-dark); outline-offset: 3px; }

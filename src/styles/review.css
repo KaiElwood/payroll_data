@@ -1,0 +1,16 @@
+.rule-panel { margin-bottom: 20px; }
+.rule-panel .muted { max-width: 900px; margin-bottom: 0; }
+.review-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.review-controls button { padding: 9px 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: 12px; text-transform: capitalize; }
+.review-controls button.active { border-color: #87d8c4; color: var(--teal-dark); background: #e7f8f2; }
+.flag-list { display: grid; gap: 12px; }
+.flag-card { padding: 22px 28px; }
+.flag-top, .flag-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; }
+.flag-category { color: var(--muted); font-size: 11px; text-transform: capitalize; }
+.flag-pill { display: inline-block; padding: 5px 8px; border: 1px solid #a6d9c9; border-radius: 6px; background: #e7f8f2; color: var(--teal-dark); font-size: 10px; font-weight: 700; }
+.flag-pill.high { border-color: #efd1a0; background: #fff2d9; color: #8c5b17; }
+.flag-main { margin-top: 13px; }
+.flag-main h2 { margin: 0; font-size: 21px; }
+.flag-main .muted { margin: 6px 0 0; }
+.flag-main strong { color: var(--teal-dark); white-space: nowrap; font-size: 19px; font-variant-numeric: tabular-nums; }
+.flag-reason { margin: 15px 0 0; color: #39463e; font-size: 12px; line-height: 1.6; }
