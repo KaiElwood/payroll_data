@@ -49,7 +49,7 @@ current 263 lines; add it before importing materially larger files.
 | Endpoint | Response |
 | --- | --- |
 | `GET /api/v1/meta` | `sourceName`, `sourceSha256`, `importedAt`, `records`, `employees`, `weeks`, and filter options. |
-| `GET /api/v1/rows` | Source-ordered row objects with the React numeric fields, ISO `weekEnding`, `rowNumber` equal to the original CSV row, and `batchId`/`sourceRow` provenance. The adapter converts ISO dates to both `MM/DD/YYYY` `weekEnding` and a UTC `Date` `weekDate`. Seven-day hour arrays and exact four-decimal money values are retained. |
+| `GET /api/v1/rows` | Source-ordered row objects with the React numeric fields, ISO `weekEnding`, `rowNumber` equal to the logical CSV record number, and `batchId`/`sourceRow` provenance. The adapter converts ISO dates to both `MM/DD/YYYY` `weekEnding` and a UTC `Date` `weekDate`. Seven-day hour arrays and exact four-decimal money values are retained. |
 | `GET /api/v1/overview` | Filtered `Overview` totals and chronological `weekly` summaries. Each week has distinct employee count and line count. |
 | `GET /api/v1/employees` | Directory summaries by employee ID, with latest source name, classification, total/overtime hours, cash wages, and number of distinct weeks. |
 | `GET /api/v1/employees/{employeeId}` | Employee summary and chronological `weeks`; each week includes combined standard/overtime hours, cash wages, and its source pay lines. |
