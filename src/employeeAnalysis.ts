@@ -42,3 +42,29 @@ export function compareLatestWeeks(weeks: EmployeeWeek[]): WeekComparison | null
     wagesChange: current.cashWages - previous.cashWages,
   }
 }
+
+export interface PeerWeek {
+  weekEnding: string
+  weekDate: Date
+  employeeHours: number
+  peerTotalHours: number
+  peerAverage: number | null
+  peerCount: number
+}
+
+export function comparePeerWeeks(rows: PayrollRow[], employeeId: string, occupation: string, level: string): PeerWeek[] {
+  const cohort = rows.filter((row) => row.occupation === occupation && row.level === level)
+  const employeeWeeks = getEmployeeWeeks(cohort.filter((row) => row.employeeId === employeeId))
+  return employeeWeeks.map((week) => {
+    const peerRows = cohort.filter((row) => row.weekEnding === week.weekEnding && row.employeeId !== employeeId)
+    const peerHours = new Map<string, number>()
+    for (const row of peerRows) peerHours.set(row.employeeId, (peerHours.get(row.employeeId) ?? 0) + row.totalHours)
+    const peerCount = peerHours.size
+    const peerTotalHours = [...peerHours.values()].reduce((sum, hours) => sum + hours, 0)
+    return {
+      weekEnding: week.weekEnding, weekDate: week.weekDate, employeeHours: week.totalHours,
+      peerTotalHours, peerAverage: peerCount ? peerTotalHours / peerCount : null,
+      peerCount,
+    }
+  })
+}

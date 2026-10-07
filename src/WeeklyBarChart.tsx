@@ -27,7 +27,8 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
   const [focusedWeek, setFocusedWeek] = useState<string | null>(null)
   const [activeSource, setActiveSource] = useState<'hover' | 'focus'>('hover')
   if (!points.length) return <p className="muted">No weeks match the filters.</p>
-  const max = Math.max(1, ...points.map((point) => point.primary + (point.secondary ?? 0)))
+  const largest = Math.max(...points.map((point) => point.primary + (point.secondary ?? 0)))
+  const max = largest > 0 ? largest : 1
   const x = scaleBand<string>()
     .domain(points.map((point) => point.key))
     .range([margin.left, width - margin.right])

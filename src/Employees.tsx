@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { getEmployeeSummaries, type EmployeeSummary, type PayrollRow } from './data'
-import { compareLatestWeeks, getEmployeeWeeks, type WeekComparison } from './employeeAnalysis'
+import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, type WeekComparison } from './employeeAnalysis'
 import { money, number, weekLabel } from './format'
 import WeeklyBarChart from './WeeklyBarChart'
+import PeerHoursChart from './PeerHoursChart'
 
 function RateRow({ label, min, average, max }: { label: string; min: number; average: number; max: number }) {
   return <tr><th scope="row">{label}</th><td>{money(min, 2)}</td><td>{money(average, 2)}</td><td>{money(max, 2)}</td></tr>
@@ -25,8 +26,9 @@ function LatestComparison({ comparison }: { comparison: WeekComparison | null })
   </>
 }
 
-function EmployeeDetail({ employee }: { employee: EmployeeSummary }) {
+function EmployeeDetail({ employee, rows }: { employee: EmployeeSummary; rows: PayrollRow[] }) {
   const weeks = getEmployeeWeeks(employee.rows)
+  const peerWeeks = comparePeerWeeks(rows, employee.employeeId, employee.occupation, employee.level)
   const points = weeks.map((week) => ({ key: week.weekEnding, label: weekLabel(week.weekDate), primary: week.standardHours, secondary: week.overtimeHours }))
   return <div className="employee-detail">
     <div className="section-heading"><div><span className="eyebrow">Employee detail</span><h2>{employee.name}</h2><p className="muted">ID {employee.employeeId} · {employee.occupation} · {employee.level.toLowerCase()}</p></div><span className="pill">{employee.weeks} weeks</span></div>
@@ -36,6 +38,10 @@ function EmployeeDetail({ employee }: { employee: EmployeeSummary }) {
     <WeeklyBarChart points={points} title={`${employee.name} weekly hours`} description="Standard and overtime hours by reporting week. Exact weekly totals are in the table below." formatTick={(value) => `${number(value, value < 10 ? 1 : 0)} h`} formatValue={(value) => `${number(value, 1)} hours`} primaryLabel="standard" secondaryLabel="overtime" />
     <details className="chart-data"><summary>View weekly hour totals</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Standard</th><th scope="col">Overtime</th><th scope="col">Total</th></tr></thead><tbody>{weeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{number(week.standardHours, 1)} h</td><td>{number(week.overtimeHours, 1)} h</td><td>{number(week.totalHours, 1)} h</td></tr>)}</tbody></table></div></details>
     <h3>Change from previous reported week</h3><LatestComparison comparison={compareLatestWeeks(weeks)} />
+    <h3>Hours beside peers</h3><p className="hint">Same occupation and level, in weeks this employee reported work. Peer mean = other workers’ total hours ÷ their reported employee-weeks for that week. Records in other roles are excluded.</p>
+    <div className="chart-legend"><span><i className="legend-standard" />Employee</span><span><i className="legend-overtime" />Peer mean</span></div>
+    <PeerHoursChart weeks={peerWeeks} />
+    <details className="chart-data"><summary>View employee and peer hours</summary><div className="table-scroll"><table><thead><tr><th scope="col">Week ending</th><th scope="col">Employee hours</th><th scope="col">Peers</th><th scope="col">Peer total hours</th><th scope="col">Peer mean hours</th></tr></thead><tbody>{peerWeeks.map((week) => <tr key={week.weekEnding}><td>{weekLabel(week.weekDate)}</td><td>{number(week.employeeHours, 1)} h</td><td>{week.peerCount}</td><td>{number(week.peerTotalHours, 1)} h</td><td>{week.peerAverage === null ? '—' : `${number(week.peerAverage, 1)} h`}</td></tr>)}</tbody></table></div></details>
     <h3>Daily hours</h3><p className="hint">Minimum and average use days with reported work; maximum includes all days.</p>
     <div className="detail-metrics"><div><span>Minimum active day</span><strong>{number(employee.minActiveDayHours, 1)} h</strong></div><div><span>Average active day</span><strong>{number(employee.averageActiveDayHours, 1)} h</strong></div><div><span>Maximum day</span><strong>{number(employee.maxDayHours, 1)} h</strong></div></div>
     <h3>Hourly rates</h3><div className="table-scroll"><table><thead><tr><th scope="col">Rate</th><th scope="col">Minimum</th><th scope="col">Average</th><th scope="col">Maximum</th></tr></thead><tbody>
@@ -57,6 +63,6 @@ export default function Employees({ rows }: { rows: PayrollRow[] }) {
   return <div className="content"><div className="page-title"><div><span className="eyebrow">Workspace / Employees</span><h1>Employee overviews</h1><p className="muted">Explore hours, rates, and weekly payroll history for each worker.</p></div></div>
     <div className="employee-layout"><section className="panel employee-list"><div className="section-heading"><div><span className="eyebrow">Directory</span><h2>{employees.length} employees</h2></div></div><label className="search-label" htmlFor="employee-search">Search employees</label><input id="employee-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, ID, or occupation" />
       <div className="employee-items">{employees.map((employee) => <button key={employee.employeeId} className={employee.employeeId === selected?.employeeId ? 'employee-item selected' : 'employee-item'} aria-pressed={employee.employeeId === selected?.employeeId} onClick={() => setSelectedId(employee.employeeId)}><span><strong>{employee.name}</strong><small>{employee.occupation} · {employee.level.toLowerCase()}</small></span><span className="employee-hours">{number(employee.totalHours, 1)} h</span></button>)}</div>{!employees.length && <p className="muted">No employees match this search and the selected filters.</p>}
-    </section><section className="panel">{selected ? <EmployeeDetail employee={selected} /> : <p className="muted">Select a different filter to see employee details.</p>}</section></div>
+    </section><section className="panel">{selected ? <EmployeeDetail employee={selected} rows={rows} /> : <p className="muted">Select a different filter to see employee details.</p>}</section></div>
   </div>
 }
