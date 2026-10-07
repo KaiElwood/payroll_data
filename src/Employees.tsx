@@ -10,14 +10,17 @@ function RateRow({ label, min, average, max }: { label: string; min: number; ave
 
 function LatestComparison({ comparison }: { comparison: WeekComparison | null }) {
   if (!comparison) return <p className="hint">At least two reported weeks are needed for a comparison. Try selecting all weeks.</p>
-  const { current, previous, hoursChange, overtimeChange, wagesChange } = comparison
+  const { current, previous, hoursChange, overtimeChange } = comparison
+  const previousCents = Math.round(previous.cashWages * 100)
+  const currentCents = Math.round(current.cashWages * 100)
+  const wageChangeCents = currentCents - previousCents
   const signed = (value: number, formatted: string) => `${value > 0 ? '+' : value < 0 ? '−' : ''}${formatted}`
   return <>
     <p className="hint">{weekLabel(current.weekDate)} compared with the previous reported week, {weekLabel(previous.weekDate)}. A gap between reports is possible.</p>
     <div className="table-scroll"><table><thead><tr><th scope="col">Metric</th><th scope="col">Previous</th><th scope="col">Latest</th><th scope="col">Change</th></tr></thead><tbody>
       <tr><th scope="row">Total hours</th><td>{number(previous.totalHours, 1)} h</td><td>{number(current.totalHours, 1)} h</td><td>{signed(hoursChange, `${number(Math.abs(hoursChange), 1)} h`)}</td></tr>
       <tr><th scope="row">Overtime hours</th><td>{number(previous.overtimeHours, 1)} h</td><td>{number(current.overtimeHours, 1)} h</td><td>{signed(overtimeChange, `${number(Math.abs(overtimeChange), 1)} h`)}</td></tr>
-      <tr><th scope="row">Cash wages</th><td>{money(previous.cashWages, 2)}</td><td>{money(current.cashWages, 2)}</td><td>{signed(wagesChange, money(Math.abs(wagesChange), 2))}</td></tr>
+      <tr><th scope="row">Cash wages</th><td>{money(previousCents / 100, 2)}</td><td>{money(currentCents / 100, 2)}</td><td>{signed(wageChangeCents, money(Math.abs(wageChangeCents) / 100, 2))}</td></tr>
     </tbody></table></div>
   </>
 }
