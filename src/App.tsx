@@ -64,7 +64,7 @@ export default function App() {
         <span className="filter-count">{rows.length} records</span>
         {hasFilters && <button className="clear-filters" onClick={clearFilters}>Clear filters</button>}
       </div>
-      {page === 'overview' ? <Overview rows={rows} /> : page === 'employees' ? <Employees rows={rows} /> : <Review rows={rows} />}
+      {page === 'overview' ? <Overview rows={rows} /> : page === 'employees' ? <Employees rows={rows} /> : <Review rows={rows} allRows={allRows} />}
     </main>
   </div>
 }

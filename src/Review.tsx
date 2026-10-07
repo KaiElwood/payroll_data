@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { findReviewFlags, type FlagCategory } from './anomalies'
-import { payrollRows, type PayrollRow } from './data'
+import type { PayrollRow } from './data'
 import { weekLabel } from './format'
 
-const allFlags = findReviewFlags(payrollRows)
-
-export default function Review({ rows }: { rows: PayrollRow[] }) {
+export default function Review({ rows, allRows }: { rows: PayrollRow[]; allRows: PayrollRow[] }) {
   const [category, setCategory] = useState<FlagCategory | 'all'>('all')
+  const allFlags = useMemo(() => findReviewFlags(allRows), [allRows])
   const visibleRows = new Set(rows.map((row) => row.rowNumber))
   const flags = allFlags.filter((flag) => flag.sourceRows.some((source) => visibleRows.has(source.rowNumber)) && (category === 'all' || flag.category === category))
   return <div className="content"><div className="page-title"><div><span className="eyebrow">Workspace / Review queue</span><h1>Needs review</h1><p className="muted">Statistical and threshold-based cues for a human reviewer. A flag is not a confirmed error or compliance finding.</p></div><span className="source-pill">{flags.length} flags</span></div>
