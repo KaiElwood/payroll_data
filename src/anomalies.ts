@@ -52,12 +52,17 @@ export function findReviewFlags(rows: PayrollRow[]): ReviewFlag[] {
   for (const row of rows) {
     const employeeRows = byEmployee.get(row.employeeId)!
     const peers = employeeRows.filter((other) => other.weekEnding !== row.weekEnding)
-    const singleRecordWeek = employeeRows.filter((other) => other.weekEnding === row.weekEnding).length === 1
-    if (row.totalHours > WEEK_LIMIT) add(row, 'hours', 'high', 'Long reported week', `${number(row.totalHours, 1)} h`, `Reported weekly hours exceed the ${WEEK_LIMIT}-hour review threshold.`)
-    days.forEach((day, index) => {
-      const hours = row.standardHours[index] + row.overtimeHours[index]
-      if (hours > DAY_LIMIT) add(row, 'hours', 'high', `Long ${day.toUpperCase()} shift`, `${number(hours, 1)} h`, `Reported daily hours exceed the ${DAY_LIMIT}-hour review threshold.`)
-    })
+    const sameWeekRows = employeeRows.filter((other) => other.weekEnding === row.weekEnding)
+    const singleRecordWeek = sameWeekRows.length === 1
+    if (sameWeekRows[0] === row) {
+      const source = singleRecordWeek ? 'one record' : `${sameWeekRows.length} records (CSV rows ${sameWeekRows.map((item) => item.rowNumber).join(', ')})`
+      const weekHours = sameWeekRows.reduce((total, item) => total + item.totalHours, 0)
+      if (weekHours > WEEK_LIMIT) add(row, 'hours', 'high', 'Long reported week', `${number(weekHours, 1)} h`, `Combined hours from ${source} exceed the ${WEEK_LIMIT}-hour weekly review threshold.`)
+      days.forEach((day, index) => {
+        const hours = sameWeekRows.reduce((total, item) => total + item.standardHours[index] + item.overtimeHours[index], 0)
+        if (hours > DAY_LIMIT) add(row, 'hours', 'high', `Long ${day.toUpperCase()} shift`, `${number(hours, 1)} h`, `Combined hours from ${source} exceed the ${DAY_LIMIT}-hour daily review threshold.`)
+      })
+    }
     if (singleRecordWeek && row.totalHours <= WEEK_LIMIT) {
       const result = scoreAgainstOtherWeeks(row.totalHours, valuesFromOtherWeeks(peers, 'totalHours'), 10)
       if (result) add(row, 'hours', 'review', 'Unusual weekly hours', `${number(row.totalHours, 1)} h`, `Other weeks average ${number(result.average, 1)} h. This week differs by ${result.score === Infinity ? 'more than a constant baseline' : `${number(result.score, 1)} standard deviations`}.`)

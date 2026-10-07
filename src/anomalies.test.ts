@@ -43,6 +43,13 @@ describe('payroll reporting data', () => {
     expect(findReviewFlags(records).some((flag) => flag.title === 'Unusual weekly hours')).toBe(false)
   })
 
+  it('combines split records once for the weekly hour guardrail', () => {
+    const flags = findReviewFlags([row(0, 0, 35), row(1, 0, 35)])
+    const longWeeks = flags.filter((flag) => flag.title === 'Long reported week')
+    expect(longWeeks).toHaveLength(1)
+    expect(longWeeks[0].observed).toBe('70.0 h')
+  })
+
   it('describes tied employee names without inventing a usual name', () => {
     const flags = findReviewFlags([row(0, 0, 40, 'Alex One'), row(1, 1, 40, 'Alex Two')])
     expect(flags.filter((flag) => flag.title === 'Conflicting names for employee ID')).toHaveLength(2)
