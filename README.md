@@ -16,6 +16,8 @@ npm test
 npm run build
 ```
 
+For browser tests, install Chromium once with `npx playwright install chromium`, then run `npm run test:e2e`. Playwright serves the app locally using the committed CSV.
+
 ## What the dashboard shows
 
 - **Overview:** Cash wages, reported hours, overtime, unique employees, apprentice hour share, weekly wage spend, estimated benefits value, and the latest week.
