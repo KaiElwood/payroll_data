@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { findReviewFlags } from './anomalies'
-import { payrollRows } from './data'
+import { payrollRows } from './csvData'
 import Review from './Review'
 
 describe('review source', () => {

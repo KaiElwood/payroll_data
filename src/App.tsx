@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getWeeklySummaries, payrollRows, type PayrollRow } from './data'
+import { getWeeklySummaries, type PayrollRow } from './data'
 import { loadApiRows } from './apiData'
 import { weekLabel } from './format'
 import Overview from './Overview'
@@ -20,12 +20,14 @@ export default function App() {
   const [level, setLevel] = useState('all')
   const [occupation, setOccupation] = useState('all')
   const [week, setWeek] = useState('all')
-  const [sourceRows, setSourceRows] = useState<PayrollRow[] | null>(useLocalApi ? null : payrollRows)
+  const [sourceRows, setSourceRows] = useState<PayrollRow[] | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   useEffect(() => {
-    if (!useLocalApi) return
     let active = true
-    loadApiRows().then((loaded) => { if (active) setSourceRows(loaded) })
+    const loadRows = useLocalApi
+      ? loadApiRows()
+      : import('./csvData').then(({ payrollRows }) => payrollRows)
+    loadRows.then((loaded) => { if (active) setSourceRows(loaded) })
       .catch((error: unknown) => { if (active) setLoadError(error instanceof Error ? error.message : String(error)) })
     return () => { active = false }
   }, [])
@@ -39,8 +41,8 @@ export default function App() {
   ), [sourceRows, level, occupation, week])
   const hasFilters = level !== 'all' || occupation !== 'all' || week !== 'all'
 
-  if (loadError) return <div className="layout"><main className="main" role="alert">Local payroll API: {loadError}</main></div>
-  if (!sourceRows) return <div className="layout"><main className="main" role="status">Loading local payroll API…</main></div>
+  if (loadError) return <div className="layout"><main className="main" role="alert">{sourceLabel}: {loadError}</main></div>
+  if (!sourceRows) return <div className="layout"><main className="main" role="status">Loading {sourceLabel.toLowerCase()}…</main></div>
 
   function clearFilters() {
     setLevel('all')

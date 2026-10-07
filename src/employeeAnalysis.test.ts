@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { compareLatestWeeks, comparePeerWeeks, getEmployeeWeeks, getStandardRateHistory, type EmployeeWeek } from './employeeAnalysis'
-import { payrollRows } from './data'
+import { payrollRows } from './csvData'
 
 describe('employee weekly analysis', () => {
   it('combines split rows for one employee and week', () => {

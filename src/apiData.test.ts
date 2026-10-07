@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { normalizeApiRows } from './apiData'
-import { payrollRows } from './data'
+import { payrollRows } from './csvData'
 
 describe('local API row adapter', () => {
   it('preserves sub-cent wages and the React date contract', () => {

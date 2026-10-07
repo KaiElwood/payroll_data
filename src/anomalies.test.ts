@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { findReviewFlags } from './anomalies'
-import { getOverview, payrollRows, type PayrollRow } from './data'
+import { getOverview, type PayrollRow } from './data'
+import { payrollRows } from './csvData'
 
 const source = payrollRows[0]
 
