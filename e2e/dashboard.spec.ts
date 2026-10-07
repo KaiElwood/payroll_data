@@ -14,7 +14,7 @@ test('overview loads committed CSV totals and the wage chart gives an exact valu
   const chart = page.getByRole('group', { name: 'Weekly cash wage spend' })
   await chart.getByRole('group', { name: /Week ending 03\/01\/2025: cash wages/ }).focus()
   await expect(chart.locator('.chart-tooltip')).toContainText('Week ending 03/01/2025')
-  await expect(chart.locator('.chart-tooltip')).toContainText('cash wages:')
+  await expect(chart.locator('.chart-tooltip')).toContainText('cash wages: $35,433')
 })
 
 test('global filters combine and Clear filters restores all records', async ({ page }) => {
@@ -39,7 +39,10 @@ test('employee search and selection show weekly comparison', async ({ page }) =>
   await expect(page.getByRole('heading', { name: 'Ernestine Gerlach' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Change from previous reported week' })).toBeVisible()
   await expect(page.getByText(/compared with the previous reported week/)).toBeVisible()
-  await expect(page.getByRole('row', { name: /Cash wages/ }).first()).toBeVisible()
+  const hoursComparison = page.getByRole('row', { name: /Total hours/ }).first()
+  await expect(hoursComparison).toContainText('44.9 h')
+  await expect(hoursComparison).toContainText('42.1 h')
+  await expect(hoursComparison).toContainText('−2.8 h')
 })
 
 test('review category and week filter narrow the queue', async ({ page }) => {
