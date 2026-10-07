@@ -25,6 +25,7 @@ const margin = { top: 15, right: 12, bottom: 34, left: 58 }
 export default function WeeklyBarChart({ points, title, description, formatTick, formatValue, primaryLabel, secondaryLabel }: Props) {
   const [hoveredWeek, setHoveredWeek] = useState<string | null>(null)
   const [focusedWeek, setFocusedWeek] = useState<string | null>(null)
+  const [activeSource, setActiveSource] = useState<'hover' | 'focus'>('hover')
   if (!points.length) return <p className="muted">No weeks match the filters.</p>
   const max = Math.max(1, ...points.map((point) => point.primary + (point.secondary ?? 0)))
   const x = scaleBand<string>()
@@ -35,7 +36,8 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
   const ticks = y.ticks(4)
   const labelStep = Math.max(1, Math.ceil(points.length / 6))
   const barWidth = Math.min(42, x.bandwidth())
-  const activePoint = points.find((point) => point.key === (hoveredWeek ?? focusedWeek))
+  const activeKey = activeSource === 'hover' ? hoveredWeek ?? focusedWeek : focusedWeek ?? hoveredWeek
+  const activePoint = points.find((point) => point.key === activeKey)
   const tooltipWidth = 190
   const tooltipHeight = activePoint?.secondary === undefined ? 58 : 76
   const activeX = activePoint ? (x(activePoint.key) ?? 0) + x.bandwidth() / 2 : 0
@@ -58,8 +60,8 @@ export default function WeeklyBarChart({ points, title, description, formatTick,
         const detail = `Week ending ${point.key}`
         const values = `${primaryLabel} ${formatValue(point.primary)}${point.secondary === undefined ? '' : `, ${secondaryLabel} ${formatValue(point.secondary)}`}`
         return <g key={point.key} className="chart-week" tabIndex={0} role="group" aria-label={`${detail}: ${values}`}
-          onMouseEnter={() => setHoveredWeek(point.key)} onMouseLeave={() => setHoveredWeek(null)}
-          onFocus={() => setFocusedWeek(point.key)} onBlur={() => setFocusedWeek(null)}>
+          onMouseEnter={() => { setHoveredWeek(point.key); setActiveSource('hover') }} onMouseLeave={() => setHoveredWeek(null)}
+          onFocus={() => { setFocusedWeek(point.key); setActiveSource('focus') }} onBlur={() => setFocusedWeek(null)}>
           <rect className="chart-hit-area" x={x(point.key) ?? 0} y={margin.top} width={x.bandwidth()} height={bottom - margin.top} />
           <rect className="chart-bar-primary" x={xPos} y={primaryTop} width={barWidth} height={bottom - primaryTop} />
           {point.secondary !== undefined && <rect className="chart-bar-secondary" x={xPos} y={secondaryTop} width={barWidth} height={primaryTop - secondaryTop} />}
