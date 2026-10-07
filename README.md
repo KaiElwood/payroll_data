@@ -1,6 +1,6 @@
 # Payroll reporting prototype
 
-A client-side React and TypeScript dashboard for a local construction payroll CSV. It helps a project manager scan workforce and wage patterns, inspect employee history, and triage records that merit review.
+A client-side React and TypeScript dashboard for a local construction payroll CSV. It helps a project manager scan workforce and wage patterns, inspect employee history, and triage records that merit review. The [live dashboard](https://www.kais.garden/payroll_data) is hosted at Kai's Garden.
 
 ## Run locally
 
@@ -39,6 +39,6 @@ The build favors a clear local-data workflow and explainable calculations over a
 
 The next product step is a **selectable wage-table comparison**. A reviewer could choose an authoritative table, including a New York example, then supply the relevant locality, effective date, and occupation/level mapping. Results should remain provisional until those inputs and the table version are confirmed.
 
-The charts use React-rendered SVG elements and D3 scales for placement. GitHub Pages builds from `main` through `.github/workflows/deploy.yml`; the public site includes the committed payroll CSV in its client-side bundle.
+The charts use React-rendered SVG elements and D3 scales for placement. GitHub Pages builds from `main` through `.github/workflows/deploy.yml`; the garden app proxies `/payroll_data` and its assets to that Pages deployment, so chart and data updates do not need to be copied into the garden repository. The public site includes the committed payroll CSV in its client-side bundle.
 
 Open product and data questions are tracked in [questions.md](questions.md). The incremental build sequence is in [ROADMAP.md](ROADMAP.md).
